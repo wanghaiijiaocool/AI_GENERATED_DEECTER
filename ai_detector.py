@@ -256,7 +256,6 @@ def train():
                 pbar.set_description(f"step {step} loss {loss}")
                 print(loss)
             if(step  % 200 == 0 and step > 0):
-                from IPython.display import display,clear_output,update_display
                 test = generate(final_text[0],model,tokenizer)
                 print("="* 100)
                 print(">"* 100)
@@ -265,8 +264,9 @@ def train():
 train()           
 ##########################################################################
 
-model = model.merge_and_unload()
-import torch
-torch.save(model.state_dict(),"../../saved_model/ai_detector.bin")
+model.save
+#model = model.merge_and_unload()
+#import torch
+#torch.save(model.state_dict(),"../../saved_model/ai_detector.bin")
 
 
