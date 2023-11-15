@@ -267,6 +267,6 @@ train()
 
 model = model.merge_and_unload()
 import torch
-torch.save
+torch.save(model.state_dict(),"../../saved_model/ai_detector.bin")
 
 
