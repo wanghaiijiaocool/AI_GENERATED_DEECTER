@@ -264,7 +264,7 @@ def train():
 train()           
 ##########################################################################
 
-model.save
+model.save_pretrained("../../saved_model/ai_detector_peft")
 #model = model.merge_and_unload()
 #import torch
 #torch.save(model.state_dict(),"../../saved_model/ai_detector.bin")
