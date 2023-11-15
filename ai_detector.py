@@ -263,6 +263,10 @@ def train():
                 print(test)
                 print(">"* 10,label_text[0])
 train()           
+##########################################################################
 
+model = model.merge_and_unload()
+import torch
+torch.save
 
 
