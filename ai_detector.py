@@ -7,7 +7,7 @@ train_prompts_path = "./data/train_prompts.csv"
 supplement_data_dir = "./data/archive/"
 supplement_data_files = [  os.path.join(supplement_data_dir,f)  
                           for f in os.listdir(supplement_data_dir)
-                          if(f.endswith('.csv'))]
+                          if(f.endswith('.csv') and '04' in f)]
 
 def set_proxy():
     import os
@@ -35,17 +35,32 @@ train_data['prompt'] = train_data.apply(
     lambda r: instructions[r['prompt_id']] if  r['prompt_id'] in instructions else -1,axis=1
 )
 
+supplement_train_data_v1 = pd.read_csv(supplement_data_dir+"train_essays_RDizzl3_seven_v1.csv")
+
+
 supplement_train_data = pd.concat([
     pd.read_csv(f)
     for f in supplement_data_files
 ])
+# 生成数据只取200
+supplement_train_data = supplement_train_data[supplement_train_data["label"]==1]
 supplement_train_data['generated'] = supplement_train_data['label']
 supplement_train_data = supplement_train_data[['text','generated','prompt']]
+print(supplement_train_data.generated.value_counts())
+print(supplement_train_data.sample(10))
+
+#
+
+
+
 import gc
 #del train_data_re
 gc.collect()
 train_data_re = pd.DataFrame(train_data[['text','generated','prompt']])
 train_data_all = pd.concat([train_data,supplement_train_data])
+print(train_data_all.generated.value_counts())
+print(train_data_all.sample(10))
+
 #############################################################################
 cache_dir = "/home/tx/workspace/cache"  # 替换为你想要的缓存目录的路径
 from transformers import AutoModelForCausalLM,AutoTokenizer
@@ -201,10 +216,12 @@ lr_scheduler = get_linear_schedule_with_warmup(
 ####################################################################################
 all_path=[]
 def save(model,step):
-
-    last_path = all_path[-1]
-    idx = int(last_path.split('_')[-1])
-    idx = idx + step
+    if(len(all_path) > 0):
+        last_path = all_path[-1] 
+        idx = int(last_path.split('_')[-1])
+        idx = idx + step
+    else:
+        idx = 0
 
     path = f"../../saved_model/ai_detector_peft_{idx}"
     model.save_pretrained(path)
