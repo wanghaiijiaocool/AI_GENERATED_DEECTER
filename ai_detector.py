@@ -197,6 +197,22 @@ lr_scheduler = get_linear_schedule_with_warmup(
     num_training_steps=(len(dataloader_random) ),
 )
 
+
+####################################################################################
+all_path=[]
+def save(model,step):
+
+    last_path = all_path[-1]
+    idx = int(last_path.split('_')[-1])
+    idx = idx + step
+
+    path = f"../../saved_model/ai_detector_peft_{idx}"
+    model.save_pretrained(path)
+    return
+
+
+
+####################################################################################
 def train():
     num_epochs = 1
     for epoch in range(num_epochs):
@@ -234,10 +250,15 @@ def train():
                 print(">"* 100)
                 print(test)
                 print(">"* 10,label_text[0])
+            if(step % 1000 == 0):
+                save(model, 1000)
 train()           
 ##########################################################################
 
-model.save_pretrained("../../saved_model/ai_detector_peft")
+
+model.save_pretrained("../../saved_model/ai_detector_peft_final")
+
+
 #model = model.merge_and_unload()
 #import torch
 #torch.save(model.state_dict(),"../../saved_model/ai_detector.bin")
