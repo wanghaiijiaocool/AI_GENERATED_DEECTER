@@ -36,7 +36,9 @@ train_data['prompt'] = train_data.apply(
 )
 
 supplement_train_data_v1 = pd.read_csv(supplement_data_dir+"train_essays_RDizzl3_seven_v1.csv")
-
+supplement_train_data_v1['generated'] =  supplement_train_data_v1['label']
+supplement_train_data_v1['prompt']= None
+# train_data_re = pd.DataFrame(train_data[['text','generated','prompt']])
 
 supplement_train_data = pd.concat([
     pd.read_csv(f)
@@ -57,7 +59,7 @@ import gc
 #del train_data_re
 gc.collect()
 train_data_re = pd.DataFrame(train_data[['text','generated','prompt']])
-train_data_all = pd.concat([train_data,supplement_train_data])
+train_data_all = pd.concat([train_data,supplement_train_data,supplement_train_data_v1])
 print(train_data_all.generated.value_counts())
 print(train_data_all.sample(10))
 
