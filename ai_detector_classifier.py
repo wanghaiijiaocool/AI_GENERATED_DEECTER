@@ -160,7 +160,8 @@ from peft import (
 
 from peft import LoraConfig, TaskType
 #lora_target_modules = ["query_key_value"]
-lora_target_modules = [ f"transformer.h.{ly}.self_attention.query_key_value" for ly in range(25,29) ] \
+lora_target_modules = [ f"transformer.h.{ly}.self_attention.query_key_value" for ly in range(24,29) ] \
+                + [ f"transformer.h.{ly}.self_attention.dense" for ly in range(24,29) ] \
                 + ['score']
 peft_config = LoraConfig(task_type=TaskType.CAUSAL_LM, 
                          inference_mode=False, target_modules=lora_target_modules,
@@ -180,7 +181,7 @@ from transformers import get_linear_schedule_with_warmup
 model = model.cuda()
 optimizer = torch.optim.AdamW(
     [
-        {'params': [p for p in model.parameters() if p.requires_grad],'lr': 5e-5},
+        {'params': [p for p in model.parameters() if p.requires_grad],'lr': 5e-4},
     ]
 )
 lr_scheduler = get_linear_schedule_with_warmup(
@@ -231,10 +232,11 @@ def train():
             optimizer.step()
             lr_scheduler.step()
             optimizer.zero_grad()
-            if(step % 100 == 0):
-                pbar.set_description(f"step {step} loss {loss}")
-            if(step % 1000 == 0):
+            pbar.set_description(f"step {step} loss {loss}")
+            if(step % 10 == 0):
                 save(model, 1000)
+                print(logits)
+
 train()           
 ##########################################################################
 
