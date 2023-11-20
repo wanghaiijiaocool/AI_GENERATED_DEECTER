@@ -260,9 +260,8 @@ def train():
             optimizer.step()
             lr_scheduler.step()
             optimizer.zero_grad()
-            if(step % 100 == 0):
+            if(step % 2 == 0):
                 pbar.set_description(f"step {step} loss {loss}")
-                print(loss)
             if(step  % 200 == 0 and step > 0):
                 test = generate(final_text[0],model,tokenizer)
                 print("="* 100)

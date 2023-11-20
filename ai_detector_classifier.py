@@ -140,10 +140,10 @@ class myDataset(TensorDataset):
             att_mask.append(0)
         input_ids = input_ids[:self.max_length]
         att_mask = att_mask[:self.max_length]
-        print(len(input_ids),labels)
+        #print(len(input_ids),len(att_mask),labels)
 
         if(labels is not None):
-            return {'input_ids':torch.LongTensor(input_ids),'labels':torch.LongTensor(labels),'att_mask':torch.LongTensor(att_mask)},labels,final_text
+            return {'input_ids':torch.LongTensor(input_ids),'labels':torch.LongTensor([labels]),'att_mask':torch.LongTensor(att_mask)}
         else:
             return {'input_ids':torch.LongTensor(input_ids),'att_mask':torch.LongTensor(att_mask)}
 
@@ -214,8 +214,7 @@ def train():
         total_loss = 0
         pbar = tqdm(dataloader_random)
         for step, batch_a in enumerate(pbar):
-            batch,_,final_text = batch_a
-            batch = {k: v.cuda() for k, v in batch.items()}
+            batch = {k: v.cuda() for k, v in batch_a.items()}
             #print(batch)
             #outputs = model(batch['input_ids'],labels=batch['labels'])
             labels_tensor = batch['labels']
@@ -224,7 +223,7 @@ def train():
             logits = outputs.logits
 
             #loss = outputs.loss
-            loss = loss_fn(torch.nn.softmax(logits,dim=-1).view(-1,2), labels_tensor.view(-1))
+            loss = loss_fn(torch.softmax(logits,dim=-1).view(-1,2), labels_tensor.view(-1))
         
             total_loss += loss.detach().float()
             #print(loss)
