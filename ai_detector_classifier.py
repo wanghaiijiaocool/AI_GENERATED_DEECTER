@@ -235,7 +235,7 @@ def train():
             pbar.set_description(f"step {step} loss {loss}")
             if(step % 10 == 0):
                 save(model, 1000)
-                print(logits)
+                print(torch.softmax(logits,dim=-1))
 
 train()           
 ##########################################################################
